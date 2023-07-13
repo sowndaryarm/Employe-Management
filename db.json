@@ -1,0 +1,27 @@
+{
+  "posts": [
+    {
+       "firstName": "sowndarya",
+       "lastName":" R M",
+       "birthdate": "2000-4-5",
+       "gender":"f",
+       "education":"diploma",
+       "company":"persistent",
+       "jobExperience":2,
+       "salary": 30,
+       "profile":"IMG-20230504-WA0111[10512].jpg",
+       "id":1
+
+    }
+  ],
+  "comments": [
+    {
+      "id": 1,
+      "body": "some comment",
+      "postId": 1
+    }
+  ],
+  "profile": {
+    "name": "typicode"
+  }
+}

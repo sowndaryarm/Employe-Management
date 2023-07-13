@@ -1,1 +1,6 @@
-/* You can add global styles to this file, and also import other style files */
+
+@import url("https://fonts.googleapis.com/css?family=Aladin&family=Roboto&amily=Creepster&disply=swap");
+@import "~bootstrap-icons/font/bootstrap-icons.css";
+body{
+  font-family: "poppins", sans-serif;
+}
