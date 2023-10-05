@@ -8,7 +8,7 @@ import { HeaderComponent } from './header/header.component';
 import { EmployeeComponent } from './employee/employee.component';
 import { LoginComponent } from './login/login.component';
 import { HomeComponent } from './home/home.component';
-
+import { EmployeeService } from './services/employee.service';
 
 @NgModule({
   declarations: [
@@ -19,13 +19,14 @@ import { HomeComponent } from './home/home.component';
       HomeComponent
    ],
   imports: [
-    BrowserModule,
+
+  BrowserModule,
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
   ],
-  providers: [],
+  providers: [EmployeeService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

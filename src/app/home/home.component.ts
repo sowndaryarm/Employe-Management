@@ -2,6 +2,7 @@ import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { Employee } from '../models/employee.model';
 import { EmployeeService } from '../services/employee.service';
+import { HttpClient } from '@angular/common/http';
 
 
 @Component({
@@ -9,9 +10,10 @@ import { EmployeeService } from '../services/employee.service';
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
-export class HomeComponent  implements OnInit, AfterViewInit {
+export class HomeComponent implements OnInit, AfterViewInit {
   @ViewChild('fileInput') fileInput: any;
   @ViewChild('addEmployeeButton') addEmployeeButton: any;
+  title = 'EmployeeCRUD';
 
   employeeForm: FormGroup;
 
@@ -46,14 +48,15 @@ export class HomeComponent  implements OnInit, AfterViewInit {
       salary: this.fb.control(''),
     });
 
-    this.employeeService.getEmployees().subscribe((res) => {
-      for (let emp of res) {
+    this.employeeService.getEmployees().subscribe((res) =>
+    {
+      for(let emp of res){
         this.employees.unshift(emp);
       }
       this.employeesToDisplay = this.employees;
     });
-  }
 
+  }
   ngAfterViewInit(): void {
     //this.buttontemp.nativeElement.click();
   }
@@ -76,42 +79,93 @@ export class HomeComponent  implements OnInit, AfterViewInit {
     });
   }
 
- clearForm() {
-  this.FirstName.setValue('');
-  this.LastName.setValue('');
-  this.BirthDay.setValue('');
-  this.Gender.setValue('');
-  this.Education.setValue('');
-  this.Company.setValue('');
-  this.JobExperience.setValue('');
-  this.Salary.setValue('');
-  this.fileInput.nativeElement.value = '';
-}
+  removeEmployee(event: any) {
+    this.employees.forEach((val, index) => {
+      if (val.id === parseInt(event)) {
+        this.employeeService.deleteEmployee(event).subscribe((_res) => {
+          this.employees.splice(index, 1);
+        });
+      }
+    });
+  }
 
-public get FirstName(): FormControl {
-  return this.employeeForm.get('firstname') as FormControl;
-}
-public get LastName(): FormControl {
-  return this.employeeForm.get('lastname') as FormControl;
-}
-public get BirthDay(): FormControl {
-  return this.employeeForm.get('birthday') as FormControl;
-}
-public get Gender(): FormControl {
-  return this.employeeForm.get('gender') as FormControl;
-}
-public get Education(): FormControl {
-  return this.employeeForm.get('education') as FormControl;
-}
-public get Company(): FormControl {
-  return this.employeeForm.get('company') as FormControl;
-}
-public get JobExperience(): FormControl {
-  return this.employeeForm.get('jobExperience') as FormControl;
-}
-public get Salary(): FormControl {
-  return this.employeeForm.get('salary') as FormControl;
-}
+  editEmployee(event: any) {
+    this.employees.forEach((val, _ind): void => {
+      if (val.id === event) {
+        this.setForm(val);
+      }
+    });
+    this.removeEmployee(event);
+    this.addEmployeeButton.nativeElement.click();
+  }
 
-}
+  setForm(emp: Employee) {
+    this.FirstName.setValue(emp.firstname);
+    this.LastName.setValue(emp.lastname);
+    this.BirthDay.setValue(emp.birthdate);
+    this.Gender.setValue(emp.gender);
 
+    let educationIndex = 0;
+    this.educationOptions.forEach((val, index) => {
+      if (val === emp.education) educationIndex = index;
+    });
+    this.Education.setValue(educationIndex);
+
+    this.Company.setValue(emp.company);
+    this.JobExperience.setValue(emp.jobExperience);
+    this.Salary.setValue(emp.salary);
+    this.fileInput.nativeElement.value = '';
+  }
+
+  searchEmployees(event: any) {
+    let filteredEmployees: Employee[] = [];
+
+    if (event === '') {
+      this.employeesToDisplay = this.employees;
+    } else {
+      filteredEmployees = this.employees.filter((val, _index) => {
+        let targetKey = val.firstname.toLowerCase() + '' + val.lastname.toLowerCase();
+        let searchKey = event.toLowerCase();
+        return targetKey.includes(searchKey);
+      });
+      this.employeesToDisplay = filteredEmployees;
+    }
+  }
+
+  clearForm() {
+    this.FirstName.setValue('');
+    this.LastName.setValue('');
+    this.BirthDay.setValue('');
+    this.Gender.setValue('');
+    this.Education.setValue('');
+    this.Company.setValue('');
+    this.JobExperience.setValue('');
+    this.Salary.setValue('');
+    this.fileInput.nativeElement.value = '';
+  }
+
+  public get FirstName(): FormControl {
+    return this.employeeForm.get('firstname') as FormControl;
+  }
+  public get LastName(): FormControl {
+    return this.employeeForm.get('lastname') as FormControl;
+  }
+  public get BirthDay(): FormControl {
+    return this.employeeForm.get('birthday') as FormControl;
+  }
+  public get Gender(): FormControl {
+    return this.employeeForm.get('gender') as FormControl;
+  }
+  public get Education(): FormControl {
+    return this.employeeForm.get('education') as FormControl;
+  }
+  public get Company(): FormControl {
+    return this.employeeForm.get('company') as FormControl;
+  }
+  public get JobExperience(): FormControl {
+    return this.employeeForm.get('jobExperience') as FormControl;
+  }
+  public get Salary(): FormControl {
+    return this.employeeForm.get('salary') as FormControl;
+  }
+}
